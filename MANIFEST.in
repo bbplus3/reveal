@@ -1,0 +1,7 @@
+```
+include README.md
+include LICENSE.txt
+include requirements.txt
+recursive-include reveal/dictionaries *.json
+recursive-include tests *.py
+recursive-include docs *.md
