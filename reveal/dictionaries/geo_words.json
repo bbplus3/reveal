@@ -1,0 +1,21 @@
+{
+  "description": "Words that may indicate geographic location in text",
+  "words": [
+    "ft", "foot", "feet", "inches", "inch", "in", "yards", "yard",
+    "yd", "m", "meter", "meters", "miles", "mile", "cm",
+    "centimeter", "km", "kilometer", "r", "l", "right", "left",
+    "forward", "fwd", "straight", "turn", "aft", "below", "above",
+    "degrees", "city", "state", "county", "zip", "code", "zipcode",
+    "area", "locale", "loc", "province", "visiting", "visit",
+    "visited", "from", "toward", "away", "lived", "reside", "live",
+    "resides", "resided", "born", "at", "in", "going", "where",
+    "to", "go", "paces", "memorial", "monument", "building",
+    "house", "barn", "basement", "attic", "cage", "locked", "lock",
+    "window", "color", "apartment", "townhouse", "mansion", "lodge",
+    "brick", "roof", "wall", "marker", "people", "water", "sky",
+    "principality", "parish", "town", "between", "within", "steep",
+    "shallow", "deep", "dark", "bright", "spot", "rd", "road",
+    "st", "street", "roundabout", "lat", "latitude", "long",
+    "longitude"
+  ]
+}

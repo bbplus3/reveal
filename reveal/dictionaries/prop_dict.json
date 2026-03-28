@@ -1,0 +1,27 @@
+{
+  "description": "Propaganda types with example phrases",
+  "categories": {
+    "stereotype/bandwagon": ["Republican", "Tree-Hugger", "Nazi", "Environmentalist", "Special-Interest Group"],
+    "virtue/glitter": ["Natural", "Democratic", "Organic", "Scientific", "Ecological", "Sustainable"],
+    "deification": ["God-given right", "Mother Earth", "Gia"],
+    "transfer": ["American Flag", "University Seal", "Medical Association Symbol"],
+    "testimonial": ["love", "hate", "support", "reject"],
+    "plain folks": ["This is the will of the People", "Most Americans", "just like you"],
+    "band wagon": ["This is the wave of the future", "Be the first on your block", "Act Now!"],
+    "artificial dichotomy": ["intelligent design", "evolution"],
+    "hot potato": ["Have you stopped beating your spouse", "When will you pay the taxes you owe?"],
+    "stalling": ["More research is needed", "A fact-finding committee is working on this issue", "I am calling for an investigation on this failure"],
+    "least of evils": ["War is hell", "appeasement leads to worse disasters"],
+    "scapegoat": ["caused", "national debt"],
+    "cause/effect": ["caused by", "caused by un-regulated capitalism", "creates poor working conditions"],
+    "cherry picking": ["A study was done", "resulted in", "fatalities"],
+    "false cause": ["therefore all", "therefore most"],
+    "slippery slope": ["will lead to"],
+    "misuse of statistics": ["recommend", "more", "occurred", "increase", "decrease"],
+    "fear": ["Of course", "the people", "leaders determine policy", "simple matter", "democracy", "fascist", "dictatorship", "parliament", "communist", "no voice", "easy", "attacked", "denounce", "pacifists", "lack of patriotism", "expose", "danger"],
+    "deflection": [],
+    "tu quoque": ["You too are using fear as a propaganda technique"],
+    "preemptive framing": ["only reason", "did not lose", "embarrassed", "their fault"],
+    "diversion": []
+  }
+}
