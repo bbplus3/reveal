@@ -21,13 +21,26 @@ from reveal.harm.detector import analyze as harm_detect
 from reveal.harm.sentiment import analyze_sentiment
 
 app = Flask(__name__)
-CORS(app)  # Allow browser extension to call this API
+CORS(app, 
+     resources={r"/*": {"origins": "*"}},
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "OPTIONS"]
+)
 
 @app.after_request
-def add_private_network_header(response):
-    response.headers['Access-Control-Allow-Private-Network'] = 'true'
+def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Private-Network'] = 'true'
     return response
+
+@app.route('/quick', methods=['OPTIONS'])
+@app.route('/analyze', methods=['OPTIONS'])
+@app.route('/batch', methods=['OPTIONS'])
+@app.route('/health', methods=['OPTIONS'])
+def handle_options():
+    return '', 204
 
 
 # ── Health check ──────────────────────────────────────────────────────────────
