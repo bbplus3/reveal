@@ -1,0 +1,59 @@
+{
+    "manifest_version": 3,
+    "name": "Reveal Analyzer",
+    "version": "0.1.0",
+    "description": "Real-time harm detection and linguistic analysis powered by the Reveal NLP library.",
+
+    "permissions": [
+        "activeTab",
+        "storage",
+        "scripting"
+    ],
+
+    "host_permissions": [
+        "https://reveal-production-0326.up.railway.app/*"
+    ],
+
+    "content_scripts": [
+        {
+            "matches": [
+                "https://twitter.com/*",
+                "https://x.com/*",
+                "https://www.reddit.com/*",
+                "https://www.facebook.com/*",
+                "https://www.instagram.com/*",
+                "https://www.tiktok.com/*",
+                "https://www.linkedin.com/*",
+                "https://www.threads.net/*"
+            ],
+            "js":  ["content_script.js"],
+            "css": ["styles.css"],
+            "run_at": "document_idle"
+        }
+    ],
+
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "Reveal Analyzer",
+        "default_icon": {
+            "16":  "icons/icon16.png",
+            "48":  "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+
+    "icons": {
+        "16":  "icons/icon16.png",
+        "48":  "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+
+    "content_security_policy": {
+        "extension_pages": "default-src 'self'; connect-src https://reveal-production-0326.up.railway.app"
+    }
+}
