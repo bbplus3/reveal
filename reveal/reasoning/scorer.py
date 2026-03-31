@@ -23,6 +23,7 @@ from reveal.linguistic.pov import analyze_pov
 from reveal.cryptanalysis.entropy import analyze_entropy
 from reveal.cryptanalysis.ngrams import analyze_ngrams
 from reveal.cryptanalysis.anomaly import analyze_anomalies
+from reveal.abuse.classifier import classify_abuse
 
 
 # ── Risk weights ──────────────────────────────────────────────────────────────
@@ -45,6 +46,15 @@ WEIGHTS = {
     'entropy_anomaly':          8,
     'ngram_anomaly':            6,
     'word_anomaly':             6,
+    'abuse_detected':          30,
+    'abuse_threat':            25,
+    'abuse_coercive_control':  22,
+    'abuse_gaslighting':       18,
+    'abuse_emotional':         18,
+    'abuse_isolation':         20,
+    'abuse_narcissistic':      15,
+    'abuse_financial':         15,
+    'abuse_escalation':        20,
 }
 
 # Maximum possible score (sum of all weights)
@@ -140,7 +150,8 @@ def run_all_analyses(text):
         'pov':       analyze_pov(text),
         'entropy':   analyze_entropy(text),
         'ngrams':    analyze_ngrams(text),
-        'anomaly':   analyze_anomalies(text)
+        'anomaly':   analyze_anomalies(text),
+        'abuse':     classify_abuse(text)
     }
 
 
@@ -165,6 +176,7 @@ def extract_signals(analyses):
     entropy  = analyses['entropy']
     ngrams   = analyses['ngrams']
     anomaly  = analyses['anomaly']
+    abuse    = analyses['abuse']
 
     return {
         'grooming_detected':    harm['flags']['grooming_detected'],
@@ -181,7 +193,16 @@ def extract_signals(analyses):
         'pov_shift_detected':   pov.get('shift_detected', False),
         'entropy_anomaly':      entropy.get('anomaly_detected', False),
         'ngram_anomaly':        ngrams.get('anomaly_detected', False),
-        'word_anomaly':         anomaly.get('anomaly_detected', False)
+        'word_anomaly':         anomaly.get('anomaly_detected', False),
+        'abuse_detected':       abuse.get('abuse_detected', False),
+        'abuse_threat':         'threat' in abuse.get('active_categories', []),
+        'abuse_coercive_control': 'coercive_control' in abuse.get('active_categories', []),
+        'abuse_gaslighting':    'gaslighting' in abuse.get('active_categories', []),
+        'abuse_emotional':      'emotional_abuse' in abuse.get('active_categories', []),
+        'abuse_isolation':      'isolation' in abuse.get('active_categories', []),
+        'abuse_narcissistic':   'narcissistic_abuse' in abuse.get('active_categories', []),
+        'abuse_financial':      'financial_control' in abuse.get('active_categories', []),
+        'abuse_escalation':     abuse.get('escalation', {}).get('escalation_detected', False)
     }
 
 
@@ -205,6 +226,7 @@ def build_reasoning(signals, analyses):
     tone    = analyses['tone']
     voice   = analyses['voice']
     pov     = analyses['pov']
+    abuse   = analyses.get('abuse', {})
 
     if signals['grooming_detected']:
         words = harm['results']['grooming']['word_matches']
@@ -297,6 +319,19 @@ def build_reasoning(signals, analyses):
             f"GEOGRAPHIC SIGNALS detected: {', '.join(words[:5])}. "
             f"Text contains location-related language."
         )
+
+    if signals.get('abuse_detected'):
+        abuse_cats = abuse.get('active_categories', [])
+        esc = abuse.get('escalation', {})
+        reasons.append(
+            f"ABUSE DETECTED ({', '.join(abuse_cats)}). "
+            f"Severity: {abuse.get('severity', 'UNKNOWN')}."
+        )
+        if esc.get('escalation_detected'):
+            reasons.append(
+                f"ABUSE ESCALATION [{esc.get('escalation_level')}]: "
+                f"{esc.get('escalation_signals', [''])[0]}"
+            )
 
     if not reasons:
         reasons.append("No significant risk signals detected in this text.")
