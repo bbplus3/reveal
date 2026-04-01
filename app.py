@@ -346,6 +346,168 @@ with tab2:
     elif abuse_clicked:
         st.warning("Please enter some text to analyze.")
 
+# ── Response drafter (inside Tab 2) ──────────────────────────────────────────
+
+    if 'abuse_result' in st.session_state:
+        abuse_result = st.session_state['abuse_result']
+
+        if abuse_result.get('abuse_detected'):
+            st.markdown("---")
+            st.markdown("### 💬 Draft a Response")
+            st.markdown(
+                "Reveal can help you draft a response to this message using AI. "
+                "These are suggested starting points — edit them to fit your situation."
+            )
+
+            # Crisis resources for high severity
+            severity = abuse_result.get('severity', 'NONE')
+            if severity in ('HIGH', 'CRITICAL'):
+                st.error(
+                    "⚠️ This text shows high-risk abuse patterns. "
+                    "If you are in danger, please contact emergency services (911) "
+                    "or the National Domestic Violence Hotline: 1-800-799-7233 "
+                    "or text START to 88788."
+                )
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                boundary_clicked = st.button(
+                    "🛑 Set a Boundary",
+                    help="Generate a firm, clear response that names the behavior and states your limits.",
+                    use_container_width=True
+                )
+            with col2:
+                deescalate_clicked = st.button(
+                    "🕊️ De-escalate",
+                    help="Generate a measured response to reduce tension without validating the abuse.",
+                    use_container_width=True
+                )
+            with col3:
+                document_clicked = st.button(
+                    "📋 Document for Records",
+                    help="Generate a factual summary suitable for personal records or legal use.",
+                    use_container_width=True
+                )
+
+            # Build context for Claude
+            categories    = abuse_result.get('active_categories', [])
+            severity      = abuse_result.get('severity', 'UNKNOWN')
+            profiles      = [p['profile'] for p in abuse_result.get('profiles', [])]
+            escalation    = abuse_result.get('escalation', {})
+            original_text = st.session_state.get('abuse_input', abuse_input)
+
+            def call_claude(strategy):
+                """Calls Claude API to generate a response draft."""
+
+                if strategy == 'boundary':
+                    instruction = (
+                        "Draft a firm, calm, clear response that sets a boundary. "
+                        "The response should name the specific abusive behavior "
+                        "without being aggressive, state clearly what the person "
+                        "will not accept going forward, and be brief and direct. "
+                        "Do not explain or justify. Do not apologize. "
+                        "Do not engage with the content of the abuse."
+                    )
+                elif strategy == 'deescalate':
+                    instruction = (
+                        "Draft a measured, careful response designed to reduce "
+                        "immediate tension without validating or conceding to the "
+                        "abusive behavior. The response should be neutral in tone, "
+                        "avoid inflammatory language, and not engage directly with "
+                        "the abusive content. The goal is to buy time and reduce "
+                        "immediate risk without escalating the situation."
+                    )
+                else:  # document
+                    instruction = (
+                        "Create a clear, factual, timestamped documentation summary "
+                        "of this abusive message suitable for personal records, "
+                        "sharing with a counselor, or potential legal use. "
+                        "Include: date/time placeholder, summary of abusive content, "
+                        "types of abuse identified, severity level, and a verbatim "
+                        "quote of the most concerning part. Use objective language."
+                    )
+
+                prompt = f"""You are helping someone respond to an abusive message they received.
+
+ORIGINAL ABUSIVE MESSAGE:
+\"\"\"{original_text}\"\"\"
+
+REVEAL ANALYSIS:
+- Abuse categories detected: {', '.join(categories)}
+- Severity: {severity}
+- Abuse profiles: {', '.join(profiles) if profiles else 'None'}
+- Escalation detected: {escalation.get('escalation_detected', False)}
+- Escalation level: {escalation.get('escalation_level', 'NONE')}
+
+YOUR TASK:
+{instruction}
+
+Important guidelines:
+- Be compassionate toward the person receiving this abuse
+- Do not reproduce or validate the abusive language
+- Keep the response concise and practical
+- If severity is HIGH or CRITICAL, include a gentle reminder that professional support is available
+"""
+
+                try:
+                    import anthropic
+                    client = anthropic.Anthropic()
+                    message = client.messages.create(
+                        model="claude-opus-4-5",
+                        max_tokens=1024,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    return message.content[0].text
+                except Exception as e:
+                    return f"Error generating response: {e}"
+
+            # Handle button clicks
+            if boundary_clicked:
+                with st.spinner("Drafting boundary response..."):
+                    response = call_claude('boundary')
+                    st.session_state['drafted_response'] = response
+                    st.session_state['response_type'] = 'boundary'
+
+            if deescalate_clicked:
+                with st.spinner("Drafting de-escalation response..."):
+                    response = call_claude('deescalate')
+                    st.session_state['drafted_response'] = response
+                    st.session_state['response_type'] = 'deescalate'
+
+            if document_clicked:
+                with st.spinner("Generating documentation..."):
+                    response = call_claude('document')
+                    st.session_state['drafted_response'] = response
+                    st.session_state['response_type'] = 'document'
+
+            # Display drafted response
+            if 'drafted_response' in st.session_state:
+                response_type = st.session_state.get('response_type', '')
+                labels = {
+                    'boundary':   '🛑 Boundary Response',
+                    'deescalate': '🕊️ De-escalation Response',
+                    'document':   '📋 Documentation Record'
+                }
+                st.markdown(f"### {labels.get(response_type, 'Draft Response')}")
+
+                edited = st.text_area(
+                    "Edit this draft before using it:",
+                    value=st.session_state['drafted_response'],
+                    height=250,
+                    key='response_editor'
+                )
+
+                st.caption(
+                    "⚠️ This is a suggested draft generated by AI. "
+                    "It is not professional legal or psychological advice. "
+                    "Please edit it to fit your specific situation before using it. "
+                    "For serious situations, please consult a professional."
+                )
+
+                if st.button("📋 Copy to Clipboard", key='copy_btn'):
+                    st.code(edited)
+                    st.success("Text displayed above — select all and copy manually.")
 
 # ── Tab 3: Full Report ────────────────────────────────────────────────────────
 
