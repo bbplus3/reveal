@@ -35,14 +35,6 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Private-Network'] = 'true'
     return response
 
-@app.route('/quick', methods=['OPTIONS'])
-@app.route('/analyze', methods=['OPTIONS'])
-@app.route('/batch', methods=['OPTIONS'])
-@app.route('/health', methods=['OPTIONS'])
-def handle_options():
-    return '', 204
-
-
 # ── Health check ──────────────────────────────────────────────────────────────
 
 @app.route('/health', methods=['GET'])
@@ -57,6 +49,9 @@ def health():
         'version': '0.1.0'
     })
 
+@app.route('/test', methods=['GET', 'POST'])
+def test_route():
+    return jsonify({'test': 'ok'})
 
 # ── Full analysis endpoint ────────────────────────────────────────────────────
 
@@ -262,6 +257,126 @@ def batch_scan():
 
     return jsonify({'results': results})
 
+# ── Abuse detection endpoint ──────────────────────────────────────────────────
+
+@app.route('/abuse', methods=['POST'])
+def abuse_scan():
+    """
+    Full abuse detection endpoint.
+    Runs the complete abuse classification pipeline including
+    category detection, profile matching, and escalation analysis.
+
+    Request:
+        POST /abuse
+        Content-Type: application/json
+        {"text": "Text to analyze here"}
+
+    Response:
+        {
+            "abuse_detected": true,
+            "severity": "CRITICAL",
+            "score": 0.69,
+            "active_categories": ["gaslighting", "threat"],
+            "profiles": [...],
+            "escalation": {...},
+            "reasoning": [...],
+            "most_severe_sentence": {...}
+        }
+    """
+    data = request.get_json()
+
+    if not data or 'text' not in data:
+        return jsonify({'error': 'No text provided'}), 400
+
+    text = data['text'].strip()
+
+    if not text:
+        return jsonify({'error': 'Empty text provided'}), 400
+
+    if len(text) > 10000:
+        text = text[:10000]
+
+    try:
+        from reveal.abuse.classifier import classify_abuse
+        result = classify_abuse(text)
+
+        return jsonify({
+            'abuse_detected':    result['abuse_detected'],
+            'severity':          result['severity'],
+            'score':             result['score'],
+            'active_categories': result['active_categories'],
+            'profiles': [
+                {
+                    'profile':     p['profile'],
+                    'description': p['description'],
+                    'amplified':   p['amplified']
+                }
+                for p in result['profiles']
+            ],
+            'escalation': {
+                'escalation_detected': result['escalation']['escalation_detected'],
+                'escalation_level':    result['escalation']['escalation_level'],
+                'escalation_signals':  result['escalation']['escalation_signals']
+            },
+            'reasoning':            result['reasoning'],
+            'most_severe_sentence': result['most_severe_sentence']
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# ── Abuse quick scan endpoint ─────────────────────────────────────────────────
+
+@app.route('/abuse/quick', methods=['POST'])
+def abuse_quick():
+    """
+    Lightweight abuse quick scan.
+    Returns only the key flags without full profile analysis.
+    Faster than /abuse for real-time scanning.
+
+    Request:
+        POST /abuse/quick
+        Content-Type: application/json
+        {"text": "Text to analyze here"}
+
+    Response:
+        {
+            "abuse_detected": true,
+            "severity": "HIGH",
+            "active_categories": ["gaslighting", "threat"],
+            "escalation_detected": true,
+            "escalation_level": "HIGH"
+        }
+    """
+    data = request.get_json()
+
+    if not data or 'text' not in data:
+        return jsonify({'error': 'No text provided'}), 400
+
+    text = data['text'].strip()
+
+    if not text:
+        return jsonify({'error': 'Empty text provided'}), 400
+
+    if len(text) > 10000:
+        text = text[:10000]
+
+    try:
+        from reveal.abuse.detector import analyze_abuse
+        result = analyze_abuse(text)
+
+        return jsonify({
+            'abuse_detected':    result['abuse_detected'],
+            'severity':          result['severity'],
+            'score':             result['score'],
+            'active_categories': result['active_categories'],
+            'escalation_detected': result['escalation']['escalation_detected'] if 'escalation' in result else False,
+            'escalation_level':    result['escalation']['escalation_level'] if 'escalation' in result else 'NONE'
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # ── Run server ────────────────────────────────────────────────────────────────
 
