@@ -50,7 +50,7 @@ GASLIGHTING_PATTERNS = [
     "that's not how it happened",
     "that is not how it happened",
     "you always get things wrong",
-    "you can't remember anything",
+    "you cant remember anything",
     "your memory is terrible",
     "you always misremember",
     "you have a bad memory",
@@ -147,7 +147,7 @@ COERCIVE_CONTROL_PATTERNS = [
     "you cannot",
     "i forbid you",
     "i am forbidding you",
-    "i won't allow it",
+    "i wont allow it",
     "i will not allow",
     "you need my approval",
     "not without my approval",
@@ -195,7 +195,7 @@ EMOTIONAL_ABUSE_PATTERNS = [
     "you're an idiot",
     "you are incompetent",
     "you're incompetent",
-    "you can't do anything right",
+    "you cant do anything right",
     "you never do anything right",
     "you always mess everything up",
     "you ruin everything",
@@ -230,7 +230,7 @@ EMOTIONAL_ABUSE_PATTERNS = [
     "without me you are nothing",
     "without me you're nothing",
     "you need me",
-    "you can't survive without me",
+    "you cant survive without me",
     "you wouldn't last without me",
     "you'd fall apart without me",
     "you are lost without me",
@@ -333,7 +333,7 @@ FINANCIAL_CONTROL_PATTERNS = [
     "i control the finances",
     "i manage the money",
     "you have no access to money",
-    "you can't have money",
+    "you cant have money",
     "i keep the money",
     "the money is mine",
     "the finances are mine",
@@ -341,14 +341,14 @@ FINANCIAL_CONTROL_PATTERNS = [
     "i give you an allowance",
     "you get an allowance",
     "i decide how money is spent",
-    "you can't spend without asking",
+    "you cant spend without asking",
     "you need to ask before spending",
     "i approve all purchases",
     "every purchase needs my approval",
     "you have no money of your own",
 
     # Economic dependency
-    "you can't afford to leave",
+    "you cant afford to leave",
     "where would you go without my money",
     "you have no money without me",
     "you depend on me financially",
@@ -382,15 +382,15 @@ FINANCIAL_CONTROL_PATTERNS = [
 
 ISOLATION_PATTERNS = [
     # Family isolation
-    "your family doesn't care about you",
+    "your family doesnt care about you",
     "your family is toxic",
     "your family is bad for you",
     "your family causes problems",
-    "your family doesn't understand you",
+    "your family doesnt understand you",
     "i don't want you seeing your family",
     "you spend too much time with your family",
     "your family is trying to control you",
-    "your family doesn't want us together",
+    "your family doesnt want us together",
     "your family is against us",
     "cut off your family",
     "you don't need your family",
@@ -422,7 +422,7 @@ ISOLATION_PATTERNS = [
     "you spend too much time away from me",
     "you are always away from me",
     "i need you here with me",
-    "you can't go without me",
+    "you cant go without me",
     "you shouldn't go alone",
     "i don't trust you alone",
     "who were you with",
@@ -460,7 +460,7 @@ THREAT_PATTERNS = [
     "consider this a warning",
     "this is your last warning",
     "i am not responsible for what happens",
-    "i won't be responsible for what i do",
+    "i wont be responsible for what i do",
 
     # Implicit threats
     "you know what happens when",
@@ -469,10 +469,10 @@ THREAT_PATTERNS = [
     "don't push me",
     "don't test me",
     "don't make me angry",
-    "you won't like me when i'm angry",
+    "you wont like me when i'm angry",
     "you know what i'm like when",
     "i lose control when",
-    "i can't control myself when",
+    "i cant control myself when",
     "things could get worse",
     "it could be worse",
     "next time will be worse",
@@ -508,8 +508,8 @@ THREAT_PATTERNS = [
     "if you go i will",
     "something bad will happen if you leave",
     "you leaving will destroy me",
-    "i can't live without you",
-    "i won't survive without you",
+    "i cant live without you",
+    "i wont survive without you",
 ]
 
 
@@ -960,9 +960,129 @@ NARRATIVE_PATTERNS = {
     'threat': THREAT_REPORTED + THREAT_FIRST_PERSON,
 }
 
+# ── Physical violence and incident patterns ───────────────────────────────────
+# Catches abuse described as incidents and actions rather than direct speech
+# These are narrative descriptions of what happened
+
+PHYSICAL_VIOLENCE_PATTERNS = [
+    # Direct physical assault
+    'hit me', 'hit my face', 'knock me out', 'punch me',
+    'shove me', 'push me', 'grab me', 'choke me',
+    'threw something at me', 'threw things at me',
+    'slapped me', 'kicked me', 'spit at me',
+    'rammed into me', 'ran into me', 'shoulder checked me',
+    'physically attacked me', 'physically hurt me',
+    'put his hands on me', 'put her hands on me',
+    'got physical with me', 'became physical',
+
+    # Threatened physical violence
+    'wants to hit me', 'wants to hurt me',
+    'wants to knock me out', 'wants to punch me',
+    'might hit me', 'might hurt me', 'might knock me out',
+    'will hit me', 'will hurt me', 'will knock me out',
+    'going to hit me', 'going to hurt me',
+    'all he wants is to hit', 'all she wants is to hit',
+    'talked about hurting me', 'threatened to hit me',
+    'threatened to hurt me', 'threatened to knock me out',
+    'said he would hit me', 'said she would hit me',
+    'said he wanted to hit me', 'said she wanted to hit me',
+
+    # Children witnessing
+    'kids witnessed', 'children witnessed',
+    'kids watched', 'children watched',
+    'kids heard', 'children heard',
+    'kids saw', 'children saw',
+    'in front of the kids', 'in front of the children',
+    'kids listened', 'children listened',
+    'the kids were there', 'the children were there',
+]
+
+# ── Rage and intimidation patterns ────────────────────────────────────────────
+
+RAGE_PATTERNS = [
+    # Rage and explosive anger
+    'started raging', 'started screaming', 'started yelling',
+    'started freaking out', 'started losing it',
+    'flew into a rage', 'went into a rage',
+    'lost his temper', 'lost her temper',
+    'exploded at me', 'blew up at me',
+    'screaming at me', 'yelling at me', 'cursing at me',
+    'swearing at me', 'raging at me',
+    'freaked out on me', 'will freak out on me',
+    'ticking time bomb', 'time bomb',
+    'walking on eggshells', 'angry day',
+    'boiling point', 'reached his limit', 'reached her limit',
+
+    # Blame and accusation in rage
+    'blamed me for everything', 'i am the entire problem',
+    'i am the sole problem', 'told me i am the problem',
+    'said i am the problem', 'called me a liar',
+    'told me i am a liar', 'said i was a liar',
+    'told me i am going to hell', 'said i am going to hell',
+    'told me to get out', 'said i need to move out',
+    'wants me out of the house', 'told me to leave',
+    'said he wants me out', 'said she wants me out',
+
+    # Lack of respect framing
+    'lack of respect', 'disrespecting him', 'disrespecting her',
+    'not going to put up with', 'will not put up with',
+    'will not tolerate', 'refuses to tolerate',
+    'does not care who is there', 'does not care who sees', 
+    'in public he will', 'in front of everyone',
+]
+
+# ── Gaslighting as incident patterns ─────────────────────────────────────────
+
+GASLIGHTING_INCIDENT_PATTERNS = [
+    # Gaslighting described as what happened
+    'gaslighting me', 'was gaslighting me',
+    'he gaslighted me', 'she gaslighted me',
+    'made it my fault', 'turned it around on me',
+    'made me seem like the aggressor',
+    'said i walked into him', 'said i walked into her',
+    'said i ran into him', 'said i ran into her',
+    'said i hit him', 'said i hit her',
+    'claimed i hurt him', 'claimed i hurt her',
+    'insisted it was my fault',
+    'convinced everyone it was my fault',
+    'made it look like i was the one',
+    'in his mind i am', 'in her mind i am',
+    'in his narrative', 'in her narrative',
+    'his narrative', 'her narrative',
+    'does not affirm his narrative',
+    'defend his narrative', 'accept his narrative',
+    'when i do not affirm', 'when i dont affirm',
+    'i cannot speak', 'i cant speak',
+    'i cannot disagree', 'i cant disagree',
+    'i cannot do anything right', 'i cant do anything right',
+    'nothing i do is right', 'everything i do is wrong',
+]
+
+# ── Coercive control as incident patterns ────────────────────────────────────
+
+COERCIVE_INCIDENT_PATTERNS = [
+    'using the kids against me', 'using the children against me',
+    'threatened not to go', 'said he would not go',
+    'punishing me through the kids', 'punishing me through the children',
+    'told tony', 'told everyone it was because of me',
+    'blamed me in front of others',
+    'cannot speak', 'cannot not speak',
+    'cannot disagree', 'cannot agree',
+    'damned if i do', 'no matter what i do',
+    'nothing i do is right',
+]
 
 # ── Update ALL_PATTERNS to include narrative patterns ─────────────────────────
 
 for category in ALL_PATTERNS:
     if category in NARRATIVE_PATTERNS:
         ALL_PATTERNS[category] = ALL_PATTERNS[category] + NARRATIVE_PATTERNS[category]
+
+# Add physical violence and incident patterns to threat category
+ALL_PATTERNS['threat'] = ALL_PATTERNS['threat'] + PHYSICAL_VIOLENCE_PATTERNS + RAGE_PATTERNS
+
+# Add gaslighting incident patterns to gaslighting category
+ALL_PATTERNS['gaslighting'] = ALL_PATTERNS['gaslighting'] + GASLIGHTING_INCIDENT_PATTERNS
+
+# Add coercive incident patterns to coercive control category
+ALL_PATTERNS['coercive_control'] = ALL_PATTERNS['coercive_control'] + COERCIVE_INCIDENT_PATTERNS
