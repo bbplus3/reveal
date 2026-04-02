@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reveal-nlp"
-version = "0.3.0"
+version = "0.4.0"
 description = "Open-source Python library for intelligent harm detection and linguistic analysis in text"
 readme = "README.md"
 license = {file = "LICENSE.txt"}
