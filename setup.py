@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="reveal-nlp",
-    version="0.2.0",
+    version="0.3.0",
     author="Bonnie Bingham",
     description="Open-source Python library for intelligent harm detection and linguistic analysis in text",
     long_description=long_description,
