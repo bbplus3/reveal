@@ -12,6 +12,8 @@ import os
 sys.path.insert(0, '.')
 
 import streamlit as st
+from dotenv import load_dotenv
+load_dotenv()
 import json
 
 # ── Page config ───────────────────────────────────────────────────────────────
@@ -27,17 +29,150 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .risk-none     { background:#e8f5e9; color:#2e7d32; padding:8px 16px; border-radius:8px; font-weight:bold; font-size:1.2em; }
-    .risk-low      { background:#fff8e1; color:#f57f17; padding:8px 16px; border-radius:8px; font-weight:bold; font-size:1.2em; }
-    .risk-medium   { background:#fff3e0; color:#e65100; padding:8px 16px; border-radius:8px; font-weight:bold; font-size:1.2em; }
-    .risk-high     { background:#fce4ec; color:#b71c1c; padding:8px 16px; border-radius:8px; font-weight:bold; font-size:1.2em; }
-    .risk-critical { background:#b71c1c; color:white;   padding:8px 16px; border-radius:8px; font-weight:bold; font-size:1.2em; }
-    .signal-box    { background:#f5f5f5; border-left:4px solid #1976d2; padding:8px 12px; margin:4px 0; border-radius:4px; }
-    .concern-box   { background:#fff8e1; border-left:4px solid #f57f17; padding:8px 12px; margin:4px 0; border-radius:4px; }
-    .reason-box    { background:#e3f2fd; border-left:4px solid #1565c0; padding:8px 12px; margin:6px 0; border-radius:4px; }
-    .abuse-box     { background:#fce4ec; border-left:4px solid #b71c1c; padding:8px 12px; margin:6px 0; border-radius:4px; }
-    .escalation-box { background:#b71c1c; color:white; padding:8px 12px; margin:6px 0; border-radius:4px; }
-    .profile-box   { background:#f3e5f5; border-left:4px solid #7b1fa2; padding:8px 12px; margin:6px 0; border-radius:4px; }
+    /* ── Mobile responsive base ── */
+    .block-container {
+        padding-top: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        max-width: 100%;
+    }
+
+    /* ── Risk badges ── */
+    .risk-none     { background:#1b5e20; color:#ffffff; padding:10px 16px; border-radius:8px; font-weight:bold; font-size:1.1em; display:inline-block; }
+    .risk-low      { background:#e65100; color:#ffffff; padding:10px 16px; border-radius:8px; font-weight:bold; font-size:1.1em; display:inline-block; }
+    .risk-medium   { background:#bf360c; color:#ffffff; padding:10px 16px; border-radius:8px; font-weight:bold; font-size:1.1em; display:inline-block; }
+    .risk-high     { background:#7f0000; color:#ffffff; padding:10px 16px; border-radius:8px; font-weight:bold; font-size:1.1em; display:inline-block; }
+    .risk-critical { background:#b71c1c; color:#ffffff; padding:10px 16px; border-radius:8px; font-weight:bold; font-size:1.1em; display:inline-block; border: 2px solid #ff1744; }
+
+    /* ── Signal and info boxes ── */
+    .signal-box {
+        background: #0d47a1;
+        color: #ffffff;
+        padding: 10px 14px;
+        margin: 4px 0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        font-weight: 500;
+    }
+
+    .concern-box {
+        background: #e65100;
+        color: #ffffff;
+        padding: 10px 14px;
+        margin: 6px 0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        line-height: 1.5;
+    }
+
+    .reason-box {
+        background: #1a237e;
+        color: #ffffff;
+        padding: 10px 14px;
+        margin: 6px 0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        line-height: 1.6;
+    }
+
+    /* ── Abuse detection boxes ── */
+    .abuse-box {
+        background: #7f0000;
+        color: #ffffff;
+        padding: 10px 14px;
+        margin: 6px 0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        line-height: 1.6;
+    }
+
+    .escalation-box {
+        background: #b71c1c;
+        color: #ffffff;
+        padding: 10px 14px;
+        margin: 6px 0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        font-weight: 600;
+        line-height: 1.6;
+        border: 2px solid #ff1744;
+    }
+
+    .profile-box {
+        background: #4a148c;
+        color: #ffffff;
+        padding: 10px 14px;
+        margin: 6px 0;
+        border-radius: 6px;
+        font-size: 0.9em;
+        line-height: 1.6;
+    }
+
+    /* ── Mobile button sizing ── */
+    .stButton > button {
+        width: 100%;
+        padding: 12px 8px;
+        font-size: 0.95em;
+        font-weight: 600;
+        border-radius: 8px;
+        min-height: 48px;
+    }
+
+    /* ── Mobile text area ── */
+    .stTextArea textarea {
+        font-size: 1em;
+        line-height: 1.5;
+    }
+
+    /* ── Mobile selectbox ── */
+    .stSelectbox select {
+        font-size: 1em;
+        min-height: 44px;
+    }
+
+    /* ── Tab styling ── */
+    .stTabs [data-baseweb="tab"] {
+        font-size: 0.85em;
+        padding: 8px 10px;
+        font-weight: 600;
+    }
+
+    /* ── Metric boxes ── */
+    .stMetric {
+        background: #212121;
+        color: #ffffff;
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    /* ── Headers ── */
+    h1 { font-size: 1.6em !important; }
+    h2 { font-size: 1.3em !important; }
+    h3 { font-size: 1.1em !important; }
+
+    /* ── Ensure white text stays white inside boxes ── */
+    .abuse-box strong, .abuse-box em,
+    .reason-box strong, .reason-box em,
+    .concern-box strong, .concern-box em,
+    .escalation-box strong, .escalation-box em,
+    .profile-box strong, .profile-box em,
+    .signal-box strong, .signal-box em {
+        color: #ffffff !important;
+    }
+
+    /* ── Mobile responsive columns ── */
+    @media (max-width: 640px) {
+        .block-container {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        h1 { font-size: 1.3em !important; }
+        h3 { font-size: 1em !important; }
+        .stTabs [data-baseweb="tab"] {
+            font-size: 0.75em;
+            padding: 6px 6px;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
