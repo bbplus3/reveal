@@ -12,8 +12,11 @@ import os
 sys.path.insert(0, '.')
 
 import streamlit as st
-from dotenv import load_dotenv
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 import json
 
 # ── Page config ───────────────────────────────────────────────────────────────
